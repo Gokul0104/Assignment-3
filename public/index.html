@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Mongo tester</title>
+
+<body>
+    <h1>HELLO MONGO</h1>
+    <div>
+        Add new user
+        <input type="text" name="user" value="Gokul">
+        <button class="btn1">Add User</button>
+    </div>
+    <div>
+        Find in database filter
+        <input type="text" name="finder" value="Gokul">
+        <button class="btn3">Find Match</button>
+    </div>
+    <button class="btn2">List Data</button>
+    <div class="output"></div>
+    <script>
+        const input1 = document.querySelector('input[name="user"]');
+        const input2 = document.querySelector('input[name="finder"]');
+
+        const btn1 = document.querySelector('.btn1');
+        const btn2 = document.querySelector('.btn2');
+        const btn3 = document.querySelector('.btn3');
+
+        const output = document.querySelector('.output');
+        const endPoint = '/users';
+
+        function createOutput(data) {
+            output.innerHTML = '<div>Users</div>';
+            data.forEach(element => {
+                console.log(element);
+                const main = document.createElement('div');
+                const myInput = document.createElement('input');
+                myInput.setAttribute('type', 'text');
+                myInput.value = element.name;
+                main.append(myInput);
+
+                const span1 = document.createElement('span');
+                span1.textContent = element._id;
+                main.append(span1);
+
+                const button1 = document.createElement('button');
+                button1.textContent = 'Delete';
+                button1.style.color = 'red';
+                button1.addEventListener('click', () => {
+                    console.log('DELETE');
+                    fetch(endPoint, {
+                        method: 'delete',
+                        body: JSON.stringify(element),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(res => res.json()).then(data => {
+                        if(data.status){
+                            main.remove();
+                        }
+                    })
+                })
+                main.append(button1);
+
+                const button2 = document.createElement('button');
+                button2.textContent = 'Update';
+                button2.style.color = 'green';
+                button2.addEventListener('click', () => {
+                    element.name = myInput.value;
+                    console.log(element);
+                    fetch(endPoint, {
+                        method: 'put',
+                        body: JSON.stringify(element),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(res => res.json()).then(data => {
+                        console.log(data);
+                    })
+                })
+                main.append(button2);
+
+
+                output.append(main);
+            });
+        }
+
+        btn3.addEventListener('click', () => {
+            fetch('/user/' + input2.value).then(res => res.json())
+                .then(data => {
+                    console.log(data);
+                    createOutput(data);
+                })
+        })
+
+        btn2.addEventListener('click', () => {
+            fetch(endPoint).then(res => res.json())
+                .then(data => {
+                    createOutput(data);
+                })
+        })
+
+        btn1.addEventListener('click', () => {
+            console.log('post request inintiated')
+            const data = { name: input1.value };
+            console.log(data);
+            fetch(endPoint, {
+                method: 'post',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(res => res.json()).then(data => {
+                console.log(data);
+            })
+        })
+
+    </script>
+</body>
+</head>
+
+</html>
