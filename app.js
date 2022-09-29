@@ -42,19 +42,19 @@ client.connect(err => {
             })
         })
 
-        .post((req, res) => {
-            const userName = req.body.name;
-            const checking = emptyValueChecker(userName);
-            let boolen = true;
-            if (checking) {
-                myDB.insertOne(req.body).then((results) => {
-                    res.contentType("application/json");
-                    res.send(JSON.stringify(req.body));
-                    boolean: false;
-                });
-            } else {
-                console.log("Done");
-                res.send({ status: boolen });
+        .post(async (req, res) => {
+            try {
+                console.log("REQ:", req.body)
+                if (req.body.name == "") {
+                    res.status(400).send("Invalid user name")
+                }
+                else {
+                    const resp = await myDB.insertOne(req.body)
+                    resp.contentType("application/json");
+                    resp.send(JSON.stringify(req.body));
+                }
+            } catch (err) {
+                console.log("[ERROR:]", err)
             }
         })
 
