@@ -50,8 +50,8 @@ client.connect(err => {
                 }
                 else {
                     const resp = await myDB.insertOne(req.body)
-                    resp.contentType("application/json");
-                    resp.send(JSON.stringify(req.body));
+                    res.contentType("application/json");
+                    res.send(JSON.stringify(resp));
                 }
             } catch (err) {
                 console.log("[ERROR:]", err)
