@@ -90,6 +90,8 @@
                 .then(data => {
                     console.log(data);
                     createOutput(data);
+                }).catch(err => {
+                    alert("Finder Cannot Be Empty", err);
                 })
         })
 
