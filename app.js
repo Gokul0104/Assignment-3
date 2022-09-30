@@ -5,7 +5,7 @@ const ObjectID = require('mongodb').ObjectId;
 const router = express.Router();
 const app = express();
 const url = require('./secret.js');
-const logger = require('./logger.js');
+// const logger = require('./logger.js');
 const PORT = 8080
 const client = new MongoClient(url, {
     useNewUrlParser: true,
@@ -16,6 +16,40 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(bodyParser.json());
 
+//////////////////////////////////////////////////////////////////////////
+
+const { format, createLogger, transports } = require("winston");
+const { timestamp, combine, printf, errors } = format;
+var path = require('path');
+
+
+const logFormat = printf(({ level, message, timestamp, stack }) => {
+  return `${timestamp} ${level}: ${stack || message}`;
+});
+
+const logger = createLogger({
+  
+  format: combine(
+    format.colorize(),
+    timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+    errors({ stack: true }),
+    logFormat
+  ),
+  transports: [
+    new transports.File({ filename: "file.log" }),
+    new transports.Console(),
+  ],
+  exceptionHandlers: [new transports.File({ filename: "exceptions.log" })],
+  rejectionHandlers: [new transports.File({ filename: "rejections.log" })],
+});
+
+//module.exports=logger;
+
+//////////////////////////////////////////////////////////////////////////
+
+
+
+logger.info("hello i exist");
 const emptyValueChecker = function (str) {
     if (typeof str === "string" && str.trim().length === 0) {
         return false;
@@ -44,6 +78,7 @@ client.connect(err => {
         })
 
         .post(async (req, res) => {
+            logger.info("hello i reached post request");
             try {
                 console.log("REQ:", req.body)
                 if (req.body.name == "") {
@@ -99,7 +134,7 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 })
 
-logger.info('Server ready')
+console.log('Server ready')
 app.listen(PORT);
 
 module.exports = { emptyValueChecker };
