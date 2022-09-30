@@ -116,10 +116,8 @@
             })
                 .then((res) => res.json())
                 .then((data) => {
-
-                    console.log("user details added succesfully");
+                    alert("user details added succesfully");
                     console.log(data);
-
                 }).catch(err => {
                     alert("Please Enter the Name", err);
                 })
