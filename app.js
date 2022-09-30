@@ -5,6 +5,7 @@ const ObjectID = require('mongodb').ObjectId;
 const router = express.Router();
 const app = express();
 const url = require('./secret.js');
+const logger = require('./logger.js');
 const PORT = 8080
 const client = new MongoClient(url, {
     useNewUrlParser: true,
@@ -98,7 +99,7 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 })
 
-console.log('Server ready')
+logger.info('Server ready')
 app.listen(PORT);
 
 module.exports = { emptyValueChecker };
